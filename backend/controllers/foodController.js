@@ -3,4 +3,9 @@ import fs from 'fs'
 
 //add food item
 
-const add
+const addFood = async (req,res) => {
+
+
+}
+
+export {addFood}
