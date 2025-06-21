@@ -1,8 +1,16 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { assets } from '../../assets/frontend_assets/assets'
 import { StoreContext } from '../../context/StoreContext'
-const LoginPopup = ({ setShowLoginRider }) => {
+
+const LoginPopup = ({ setShowLogin }) => {
   const [currState, setCurrState] = useState("Sign Up")
+  const navigate = useNavigate()
+
+  const handleClose = () => {
+    setShowLogin(false)
+    navigate('/home')
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -10,7 +18,7 @@ const LoginPopup = ({ setShowLoginRider }) => {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold">{currState}</h2>
           <img
-            onClick={() => setShowLoginRider(false)}
+            onClick={handleClose}
             src={assets.cross_icon}
             alt="close"
             className="w-6 h-6 cursor-pointer"
