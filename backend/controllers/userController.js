@@ -10,3 +10,9 @@ const loginUser = async (req,res) => {
 
 }
 
+// register user 
+
+const registerUser = async (req,res) => {
+
+    
+}
