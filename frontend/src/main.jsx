@@ -1,18 +1,19 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { BrowserRouter } from "react-router-dom";
-import "./index.css";
-import StoreContextProvider from "./context/StoreContext";
-import ErrorBoundary from "./ErrorBoundary";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+import {BrowserRouter} from 'react-router-dom'
+import StoreContextProvider from './context/StoreContext.jsx'
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <BrowserRouter>
-    <ErrorBoundary>
-      <StoreContextProvider>
+ReactDOM.createRoot(document.getElementById('root')).render(
+ <BrowserRouter>
+ <StoreContextProvider>
         <App />
-      </StoreContextProvider>
-    </ErrorBoundary>
-  </BrowserRouter>
+ </StoreContextProvider>
+   
+ </BrowserRouter>
+
+
+
+  
 );
