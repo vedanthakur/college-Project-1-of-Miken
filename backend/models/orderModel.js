@@ -1,28 +1,29 @@
 import mongoose from "mongoose";
 
-const orderSchema = new mongoose.Schema({
-    user_id: {
-        type: mongoose.Schema.Types.ObjectId, // Assuming food_id references a Food document
-        required: true,
-        ref: 'userModel' // Reference to a 'user' model (you would need to define this model)
-    },
-    name:{type:String,required:true},
-    delivery_fee:{type:Number,required:true},
-    paid_amount:{type:Number,required:false},
-    phone:{type:String,required:true},
-    address:{type:String,required:true},
-    paymentMethod: {
-    type: String,
+const orderFoodSchema = new mongoose.Schema({
+  food_id: {
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
-    enum: {
-      values: ['cod', 'online_paid'],
-      message: 'Payment method must be either "cod" or "online_paid".'
-    }
+    ref: 'foodModel'
   },
+  price: { type: Number, required: true },
+  quantity: { type: Number, required: true }
+}, { _id: false });
 
-})
+const orderSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  total_amount: { type: Number, required: false },
+  phone: { type: String, required: true },
+  address: { type: String, required: true },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'userModel'
+  },
+  orderFoods: { type: {orderFoodSchema}, default: {} }
+});
 
-const orderModel = mongoose.models.order ||   mongoose.model("order",orderSchema)
+const orderModel = mongoose.models.order || mongoose.model("order", orderSchema);
 
 export default orderModel;
 
@@ -36,7 +37,7 @@ export default orderModel;
 // payment enum['cod', 'online_paid']
 // paid_amount
 
-// order 1 => many food 
+// order 1 => many food
 
 //// order_food //////
 // food_id

@@ -5,7 +5,7 @@ import axios from "axios"
 import { toast } from 'react-toastify'
 const Add = ({url}) => {
    
-    const [image,setImage] =useState(false)
+    const [image,setImage] = useState(false)
     const [data,setData] = useState({
       name:"",
       description:"",

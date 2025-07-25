@@ -1,33 +1,38 @@
-import orderModel from "../models/orderModel.js"; 
-import orderFoodModel from "../models/orderFoodModel.js"; 
-
-import fs from 'fs';
-
-
+import orderModel from "../models/orderModel.js";
 
 // Create a new order
 const createOrder = async (req, res) => {
+    // console.log("Incoming order data:", req.body);
     try {
-        // console.log("Creating order with data:", req.body);
-        // Extract order data and order food items from request body
-        const { order, orderFoods } = req.body;
+        // Expecting user_id and orderFoods in req.body (not req.body.data)
+        const { name, total_amount, phone, address, userId, orderFoods } = req.body;
+        // console.info("Order creation data:",  { name, total_amount, phone, address, userId, orderFoods } );
 
-        // Create the order
-        const newOrder = new orderModel(order);
-        const savedOrder = await newOrder.save();
+        // // // Validate required fields
+        // if (!name || !phone || !address || !userId || !orderFoods || !Array.isArray(orderFoods)) {
+        //     return res.status(400).json({ error: "Missing required fields" });
+        // }
 
-        // Create order food items, linking them to the new order
-        const orderFoodDocs = orderFoods.map(item => ({
-            ...item,
-            order_id: savedOrder._id
-        }));
-
-        const savedOrderFoods = await orderFoodModel.insertMany(orderFoodDocs);
-
-        res.status(201).json({
-            order: savedOrder,
-            orderFoods: savedOrderFoods
+        // // Create the order with orderFoods array
+        const newOrder = new orderModel({
+            name,
+            total_amount,
+            phone,
+            address,
+            userId,
         });
+
+        console.log("Order creation data:", newOrder);
+
+        await newOrder.save();
+
+
+        let orderData = await orderModel.findById(newOrder._id);
+        let foodData = await orderData.orderFoods;
+                
+        await orderModel.findByIdAndUpdate({foodData});
+
+        res.status(201).json({ success: "created order", order: newOrder });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
@@ -80,5 +85,4 @@ const deleteOrder = async (req, res) => {
     }
 };
 
-// Export all functions, including the new updateorderPrice
-export {createOrder, getOrders, getOrderById, updateOrder, deleteOrder};
+export { createOrder, getOrders, getOrderById, updateOrder, deleteOrder };
