@@ -1,86 +1,84 @@
-import orderModel from "../models/orderModel.js"; // Note: It's 'models' not 'modles' - you might want to correct this in your project
+import orderModel from "../models/orderModel.js"; 
+import orderFoodModel from "../models/orderFoodModel.js"; 
+
 import fs from 'fs';
 
-// Add order item
-const addOrder = async (req, res) => {
-    let image_filename = `${req.file.filename}`;
 
-    const order = new orderModel({
-        name: req.body.name,
-        price: req.body.price,
-        category: req.body.category,
-        image: image_filename
-    });
 
+// Create a new order
+const createOrder = async (req, res) => {
     try {
-        await order.save();
-        res.json({ success: true, message: "order Added" });
-    } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: "Error" });
+        // console.log("Creating order with data:", req.body);
+        // Extract order data and order food items from request body
+        const { order, orderFoods } = req.body;
+
+        // Create the order
+        const newOrder = new orderModel(order);
+        const savedOrder = await newOrder.save();
+
+        // Create order food items, linking them to the new order
+        const orderFoodDocs = orderFoods.map(item => ({
+            ...item,
+            order_id: savedOrder._id
+        }));
+
+        const savedOrderFoods = await orderFoodModel.insertMany(orderFoodDocs);
+
+        res.status(201).json({
+            order: savedOrder,
+            orderFoods: savedOrderFoods
+        });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
 };
 
-// All order list
-const listOrder = async (req, res) => {
+// Get all orders
+const getOrders = async (req, res) => {
     try {
-        const orders = await orderModel.find({});
-        res.json({ success: true, data: orders });
-    } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: "Error" });
+        const orders = await orderModel.find();
+        res.status(200).json(orders);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 };
 
-// Remove order item
-const removeOrder = async (req, res) => {
+// Get a single order by ID
+const getOrderById = async (req, res) => {
     try {
-        const order = await orderModel.findById(req.body.id);
-        // Safely unlink the image if it exists
-        if (order && order.image) {
-            fs.unlink(`uploads/${order.image}`, (err) => {
-                if (err) console.error("Error unlinking image:", err);
-            });
-        }
-
-        await orderModel.findByIdAndDelete(req.body.id);
-        res.json({ success: true, message: "order Removed" });
-
-    } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: "Error" });
+        const order = await orderModel.findById(req.params.id);
+        if (!order) return res.status(404).json({ error: 'Order not found' });
+        res.status(200).json(order);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 };
 
-// NEW FUNCTION: Update order price
-const updateOrderPrice = async (req, res) => {
+// Update an order by ID
+const updateOrder = async (req, res) => {
     try {
-        const { id, price } = req.body; // Extract id and price from the request body
-
-        // Basic validation for price
-        if (price === undefined || price === null || isNaN(parseFloat(price)) || parseFloat(price) < 0) {
-            return res.json({ success: false, message: "Invalid price provided." });
-        }
-
-        // Find the order item by ID and update its price
-        const updatedorder = await orderModel.findByIdAndUpdate(
-            id,
-            { price: parseFloat(price) }, // Ensure price is a number
-            { new: true, runValidators: true } // new: true returns the updated document, runValidators: true runs schema validators
+        const updatedOrder = await orderModel.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
         );
+        if (!updatedOrder) return res.status(404).json({ error: 'Order not found' });
+        res.status(200).json(updatedOrder);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
 
-        if (updatedorder) {
-            res.json({ success: true, message: "order price updated successfully!", data: updatedorder });
-        } else {
-            // If updatedorder is null, it means the ID was not found
-            res.json({ success: false, message: "order item not found." });
-        }
-
-    } catch (error) {
-        console.error("Error updating order price:", error); // Use console.error for errors
-        res.json({ success: false, message: "Server error during price update." });
+// Delete an order by ID
+const deleteOrder = async (req, res) => {
+    try {
+        const deletedOrder = await orderModel.findByIdAndDelete(req.params.id);
+        if (!deletedOrder) return res.status(404).json({ error: 'Order not found' });
+        res.status(200).json({ message: 'Order deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 };
 
 // Export all functions, including the new updateorderPrice
-export { addOrder, listOrder, removeOrder, updateOrderPrice };
+export {createOrder, getOrders, getOrderById, updateOrder, deleteOrder};

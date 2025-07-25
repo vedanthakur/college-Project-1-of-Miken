@@ -1,33 +1,20 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const orderFoodSchema = new mongoose.Schema({
-  food_id: {
-    type: mongoose.Schema.Types.ObjectId, // Assuming food_id references a Food document
-    required: true,
-    ref: 'foodModel' // Reference to a 'Food' model (you would need to define this model)
-  },
-  price: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 1
-  },
-  order_id: {
-    type: mongoose.Schema.Types.ObjectId, // Assuming order_id references an Order document
-    required: true,
-    ref: 'OrderModel' // Reference to an 'Order' model (you would need to define this model)
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+      food_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: 'foodModel'
+      },
+      price: { type: Number, required: true },
+      quantity: { type: Number, required: true },
+      order_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'orderModel'
+    }
 });
 
-// Create and export the Mongoose Model
-const OrderFood = mongoose.model('OrderFood', orderFoodSchema);
+const orderFoodModel = mongoose.models.orderFood || mongoose.model("orderFood", orderFoodSchema);
 
-module.exports = OrderFood;
+export default orderFoodModel;

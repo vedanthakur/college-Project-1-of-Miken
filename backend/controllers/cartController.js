@@ -39,11 +39,35 @@ const removeFromCart = async (req,res) => {
     }
 }
 
+const removeFromTheCart = async (req,res) => {
+    try {
+        let userId = req.body.userId
+        const itemIdToRemove = req.body.itemId; // This is the key (e.g., '6881f99c27bb19c088292673') to remove from cartData
+
+        // Construct the field path for $unset.
+        // It should be 'cartData.<the_item_id_to_remove>'
+        const unsetFieldPath = `cartData.${itemIdToRemove}`;
+
+        await userModel.findByIdAndUpdate(
+            userId,
+            { $unset: { [unsetFieldPath]: "" } }, // Use dynamic key for $unset
+            { new: true } // Option to return the updated document
+        );
+
+        res.json({success:true,message:"Removed From Cart"})
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:"Error"})
+
+    }
+}
+
 // fetch user cart data
 const getCart = async (req,res) => {
     try {
         let userData = await userModel.findById(req.body.userId);
         let cartData = await userData.cartData;
+        
         res.json({success:true,cartData})
     } catch (error) {
         console.log(error);
@@ -51,4 +75,4 @@ const getCart = async (req,res) => {
     } 
 }
 
-export {addToCart,removeFromCart,getCart}
+export {addToCart, removeFromCart, removeFromTheCart, getCart}

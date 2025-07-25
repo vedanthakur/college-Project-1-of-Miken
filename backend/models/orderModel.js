@@ -8,7 +8,7 @@ const orderSchema = new mongoose.Schema({
     },
     name:{type:String,required:true},
     delivery_fee:{type:Number,required:true},
-    paid_amount:{type:Number,required:true},
+    paid_amount:{type:Number,required:false},
     phone:{type:String,required:true},
     address:{type:String,required:true},
     paymentMethod: {
