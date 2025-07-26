@@ -31,21 +31,21 @@ const StoreContextProvider = (props) => {
             setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }))
         }
         if (token) {
-            await axios.post(url + "/api/cart/add", { itemId }, { headers: { token } })
+            await axios.post(url + "/api/cart/add", { itemId }, { headers: { Authorization: `Bearer ${token}` } })
         }
     }
 
     const removeFromCart = async (itemId) => {
         setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }))
         if (token) {
-            await axios.post(url + "/api/cart/remove", { itemId }, { headers: { token } })
+            await axios.post(url + "/api/cart/remove", { itemId }, { headers: { Authorization: `Bearer ${token}` } })
         }
     }
     
     const removeFoodFromCart = async (itemId) => {
         setCartItems((prev) => ({ ...prev, [itemId]: 0 }))
         if (token) {
-            await axios.post(url + "/api/cart/removeFood", { itemId }, { headers: { token } })
+            await axios.post(url + "/api/cart/removeFood", { itemId }, { headers: { Authorization: `Bearer ${token}` } })
         }
     }
 
@@ -66,7 +66,7 @@ const StoreContextProvider = (props) => {
     }
 
     const loadCartData = async (token) => {
-        const response = await axios.post(url + "/api/cart/get", {}, { headers: { token } })
+        const response = await axios.post(url + "/api/cart/get", {}, { headers: { Authorization: `Bearer ${token}` } })
         setCartItems(response.data.cartData);
     }
 
@@ -96,4 +96,4 @@ const StoreContextProvider = (props) => {
 
 }
 
-export default StoreContextProvider; 
+export default StoreContextProvider;

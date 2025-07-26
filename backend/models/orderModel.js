@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 
-const orderFoodSchema = new mongoose.Schema({
-  food_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'foodModel'
-  },
-  price: { type: Number, required: true },
-  quantity: { type: Number, required: true }
-}, { _id: false });
+// const orderFoodSchema = new mongoose.Schema({
+//   food_id: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     required: true,
+//     ref: 'foodModel'
+//   },
+//   price: { type: Number, required: false },
+//   quantity: { type: Number, required: false }
+// }, { _id: false });
 
 const orderSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -20,7 +20,7 @@ const orderSchema = new mongoose.Schema({
     required: true,
     ref: 'userModel'
   },
-  orderFoods: { type: {orderFoodSchema}, default: {} }
+  orderFoods:{type:Array, default:[]}
 });
 
 const orderModel = mongoose.models.order || mongoose.model("order", orderSchema);

@@ -2,35 +2,23 @@ import orderModel from "../models/orderModel.js";
 
 // Create a new order
 const createOrder = async (req, res) => {
-    // console.log("Incoming order data:", req.body);
     try {
-        // Expecting user_id and orderFoods in req.body (not req.body.data)
-        const { name, total_amount, phone, address, userId, orderFoods } = req.body;
-        // console.info("Order creation data:",  { name, total_amount, phone, address, userId, orderFoods } );
-
-        // // // Validate required fields
-        // if (!name || !phone || !address || !userId || !orderFoods || !Array.isArray(orderFoods)) {
-        //     return res.status(400).json({ error: "Missing required fields" });
-        // }
-
-        // // Create the order with orderFoods array
+        const { name, total_amount, phone, address, orderFoods } = req.body;
+       
         const newOrder = new orderModel({
             name,
             total_amount,
             phone,
             address,
-            userId,
+            userId: req.userId,
+            orderFoods
         });
 
-        console.log("Order creation data:", newOrder);
+        
 
         await newOrder.save();
 
-
-        let orderData = await orderModel.findById(newOrder._id);
-        let foodData = await orderData.orderFoods;
-                
-        await orderModel.findByIdAndUpdate({foodData});
+        
 
         res.status(201).json({ success: "created order", order: newOrder });
     } catch (err) {

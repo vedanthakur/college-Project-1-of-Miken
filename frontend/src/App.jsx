@@ -7,6 +7,7 @@ import PlaceOrder from './pages/PlaceOrder/PlaceOrder'
 import Footer from './components/Footer/Footer'
 import LoginPopup from './components/LoginPopup/LoginPopup'
 import { ToastContainer} from 'react-toastify';
+import Orders from './pages/Admin/Order/Orders'
 
 const App = () => {
 
@@ -21,6 +22,7 @@ const App = () => {
         <Route path='/' element={<Home/>} />
         <Route path='/cart' element={<Cart/>} />
         <Route path='/order' element={<PlaceOrder/>} />
+        <Route path='/admin/order/list' element={<Orders/>} />
 
       </Routes>    
     </div>

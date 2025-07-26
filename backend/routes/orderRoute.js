@@ -11,7 +11,7 @@ import authMiddleware from "../middleware/auth.js";
 const router = express.Router();
 
 router.post("/", authMiddleware, createOrder);           // Create a new order
-router.get("/", authMiddleware, getOrders);              // Get all orders
+router.get("/list", authMiddleware, getOrders);              // Get all orders
 router.get("/:id", authMiddleware, getOrderById);        // Get order by ID
 router.put("/:id", authMiddleware, updateOrder);         // Update order by ID
 router.delete("/:id", authMiddleware, deleteOrder);      // Delete order by ID

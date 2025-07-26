@@ -39,16 +39,31 @@ const PlaceOrder = () => {
     event.preventDefault();
 
     let total_amount = getTotalCartAmount() + 2
+    let items = cartItems
+
+    let orderItems = Object.entries(items).map(([food_id, quantity]) => ({
+    food_id: food_id,
+    quantity: quantity 
+    }));
+
+    const payload = {
+        ...data, 
+        total_amount,
+        orderFoods: orderItems
+    };
 
     
-     setData(data => ({...data, total_amount, orderFoods: cartItems}))
-     
+    setData(data => ({...data, total_amount, orderFoods: orderItems}))
     
-    toast.info(data.total_amount)
-    const response = await axios.post(`${url}/api/order/`, data, { headers: { token }})
-    console.log(response.data)
+     
+    const response = await axios.post( 
+      `${url}/api/order/`, payload, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      }
+    )
+
     if (response.data.success) {
-      toast.success(response.data.message)
+      toast.success(response.data.success)
     }
     else {
       toast.error(response.data.message)

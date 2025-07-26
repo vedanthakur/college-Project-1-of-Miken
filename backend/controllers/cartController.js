@@ -3,7 +3,7 @@ import userModel from "../models/userModel.js"
 // add items to user cart 
 const addToCart = async (req,res) =>{
     try {
-        let userData = await userModel.findById(req.body.userId);
+        let userData = await userModel.findById(req.userId);
         let cartData = await userData.cartData;
         if(!cartData[req.body.itemId])
         {
@@ -13,7 +13,7 @@ const addToCart = async (req,res) =>{
         else {
             cartData[req.body.itemId] += 1;
         }
-        await userModel.findByIdAndUpdate(req.body.userId,{cartData});
+        await userModel.findByIdAndUpdate(req.userId,{cartData});
         res.json({success:true,message:"Added to Cart"})
     } catch (error) {
         console.log(error);
@@ -25,12 +25,12 @@ const addToCart = async (req,res) =>{
 // remove items from user cart
 const removeFromCart = async (req,res) => {
     try {
-        let userData = await userModel.findById(req.body.userId)
+        let userData = await userModel.findById(req.userId)
         let cartData = await userData.cartData;
         if (cartData[req.body.itemId] > 0) {
             cartData[req.body.itemId] -= 1;    
         }
-        await userModel.findByIdAndUpdate(req.body.userId,{cartData})
+        await userModel.findByIdAndUpdate(req.userId,{cartData})
         res.json({success:true,message:"Removed From Cart"})
     } catch (error) {
         console.log(error);
@@ -41,7 +41,7 @@ const removeFromCart = async (req,res) => {
 
 const removeFromTheCart = async (req,res) => {
     try {
-        let userId = req.body.userId
+        let userId = req.userId
         const itemIdToRemove = req.body.itemId; // This is the key (e.g., '6881f99c27bb19c088292673') to remove from cartData
 
         // Construct the field path for $unset.
@@ -65,7 +65,7 @@ const removeFromTheCart = async (req,res) => {
 // fetch user cart data
 const getCart = async (req,res) => {
     try {
-        let userData = await userModel.findById(req.body.userId);
+        let userData = await userModel.findById(req.userId);
         let cartData = await userData.cartData;
         
         res.json({success:true,cartData})
