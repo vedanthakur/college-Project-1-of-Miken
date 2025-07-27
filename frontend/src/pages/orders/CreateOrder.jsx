@@ -10,7 +10,7 @@ const url ="http://localhost:4000"
 
 
 const CreateOrder = () => {
-  const { getTotalCartAmount, cartItems, token } = useContext(StoreContext)
+  const { getTotalCartAmount, cartItems, token, clearCart } = useContext(StoreContext)
 
   const [data, setData] = useState(
     {
@@ -64,6 +64,7 @@ const CreateOrder = () => {
 
     if (response.data.success) {
       toast.success(response.data.success)
+      clearCart()
     }
     else {
       toast.error(response.data.message)

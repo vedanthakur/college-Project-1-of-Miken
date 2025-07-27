@@ -21,11 +21,13 @@ const App = () => {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    const loggedInUserData = (localStorage.getItem('currentUser')) ? localStorage.getItem('currentUser') : "";
-    const role =JSON.parse(loggedInUserData).role
-    setRole(role);
-    
+    if (localStorage.getItem('currentUser')) {
+      const loggedInUserData = localStorage.getItem('currentUser')
+      const userRole = JSON.parse(loggedInUserData).role;
+      setRole(userRole);
+    }
   }, []);
+  console.log(role)
 
   const url = "http://localhost:4000";
 
@@ -39,7 +41,7 @@ const App = () => {
         <ToastContainer />
         
           
-         {role === "user" && <Navbar setShowLogin={setShowLogin} />}
+         {((role === "user") || (role === ""))  && <Navbar setShowLogin={setShowLogin} />}
 
           {role === "admin" && <AdminSidebar />}
           <Routes>
@@ -66,6 +68,7 @@ const App = () => {
               />
               <Route path="/admin/orders/:orderId" element={<ShowOrder />} />
             </Route>
+            
           </Routes>
       </div>
       <Footer />
