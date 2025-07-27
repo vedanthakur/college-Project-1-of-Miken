@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Orders = () => {
   const [order, setOrder] = useState([]);
-
+  const navigate = useNavigate();
 
   const { url, token } = useContext(StoreContext);
 
@@ -18,16 +18,13 @@ const Orders = () => {
 
   // Function to fetch the order of order items from the backend
   const fetchOrder = async (token) => {
-    console.log("TOKEN:::" + token);
     try {
       const response = await axios.get(`${url}/api/order/list`, {
         headers: { Authorization: `Bearer ${token}` } 
       });
-      console.log(response)
-      if (response.status === 200) {
-        setOrder(response.data);
-      } else {
-        toast.error('Error fetching order order');
+      
+      if (response.data.success) {
+        setOrder(response.data.orders);
       }
     } catch (error) {
       console.error('Error fetching order order:', error);
@@ -60,6 +57,7 @@ const Orders = () => {
                   <p>Quantity: {food.quantity}</p>
                 </div>
               )}
+              <button onClick={() => navigate('/order/show', { state: { orderId: item._id } })}>Show Order</button>
               <hr />
             </div>
           ))

@@ -19,7 +19,7 @@ const loginUser = async (req,res) => {
             return res.json({success:false,message:"Invalid credentials"})
         }
 
-        const token = createToken(user._id);
+        const token = createToken(user._id, user.role);
         res.json({success:true,token})
 
 
@@ -33,13 +33,13 @@ const loginUser = async (req,res) => {
 
 }
 
-const createToken = (id) => {
-    return jwt.sign({id},process.env.JWT_SECRET)
+const createToken = (id, role) => {
+    return jwt.sign({id: id, role: role},process.env.JWT_SECRET)
 }
 
 // register user 
 const registerUser = async (req,res) => { 
-    const {name,password,email} = req.body;
+    const {name, password, email, role} = req.body;
     try{
         // checking is user already exists
         const exists = await userModel.findOne({email});
@@ -62,7 +62,8 @@ const registerUser = async (req,res) => {
         const newUser = new userModel({
             name:name,
             email:email,
-            password:hashedPassword
+            password:hashedPassword,
+            role:role
         })
 
         const user = await newUser.save()

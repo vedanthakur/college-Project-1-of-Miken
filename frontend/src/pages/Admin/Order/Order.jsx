@@ -3,13 +3,17 @@ import './Orders.css';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { StoreContext } from '../../../context/StoreContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Orders = () => {
   const [order, setOrder] = useState([]);
 
 
   const { url, token } = useContext(StoreContext);
+  const location = useLocation(); // Get the location object
+
+  // Access the state property. Use optional chaining for safety.
+  const orderId = location.state?.orderId;
 
   // Fetch the order when the component mounts
   useEffect(() => {
@@ -18,13 +22,13 @@ const Orders = () => {
 
   // Function to fetch the order of order items from the backend
   const fetchOrder = async (token) => {
-    console.log("TOKEN:::" + token);
+    
     try {
-      const response = await axios.get(`${url}/api/order/list`, {
+      const response = await axios.get(`${url}/api/order/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` } 
       });
-      console.log(response)
-      if (response.status === 200) {
+      
+      if (response.data.success) {
         setOrder(response.data);
       } else {
         toast.error('Error fetching order order');

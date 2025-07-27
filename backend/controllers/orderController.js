@@ -14,10 +14,7 @@ const createOrder = async (req, res) => {
             orderFoods
         });
 
-        
-
         await newOrder.save();
-
         
 
         res.status(201).json({ success: "created order", order: newOrder });
@@ -30,7 +27,7 @@ const createOrder = async (req, res) => {
 const getOrders = async (req, res) => {
     try {
         const orders = await orderModel.find();
-        res.status(200).json(orders);
+        res.status(200).json({orders, success: true});
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -38,6 +35,17 @@ const getOrders = async (req, res) => {
 
 // Get a single order by ID
 const getOrderById = async (req, res) => {
+    try {
+        const order = await orderModel.findById(req.params.id);
+        if (!order) return res.status(404).json({ error: 'Order not found' });
+        res.status(200).json(order);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Get a single order by ID
+const getOrdersByUserId = async (req, res) => {
     try {
         const order = await orderModel.findById(req.params.id);
         if (!order) return res.status(404).json({ error: 'Order not found' });
