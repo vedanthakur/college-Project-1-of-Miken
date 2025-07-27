@@ -18,6 +18,11 @@ a{
   width: 80%;
   margin: auto;
 }
+.admin-content {
+  display: flex;
+  padding: var(--spacing-medium); /* Add some padding around the main content */
+  gap: var(--spacing-large); /* Consistent gap for main sections if any */
+}
 @keyframes fadeIn {
   0%{
     opacity: 0;;

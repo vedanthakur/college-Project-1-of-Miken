@@ -21,7 +21,10 @@ const App = () => {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    setRole(localStorage.getItem("role"));
+    const loggedInUserData = (localStorage.getItem('currentUser')) ? localStorage.getItem('currentUser') : "";
+    const role =JSON.parse(loggedInUserData).role
+    setRole(role);
+    
   }, []);
 
   const url = "http://localhost:4000";
@@ -29,21 +32,25 @@ const App = () => {
   return (
     <AuthProvider>
       {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
-      <div className="app">
+      {role === "admin" && <>
+            <AdminNavbar />
+            <hr /></> }
+      <div className={`app ${role === 'admin' ? 'admin-content' : ''}`}>
         <ToastContainer />
         
-          {role === "admin" ? (
-            <AdminNavbar />
-          ) : (
-            <Navbar setShowLogin={setShowLogin} />
-          )}
+          
+         {role === "user" && <Navbar setShowLogin={setShowLogin} />}
 
           {role === "admin" && <AdminSidebar />}
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/orders/create" element={<CreateOrder />} />
+            <Route path="/" element={role === "admin" ? <ListOrders url={url} /> : <Home />} />
+
+            <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/orders/create" element={<CreateOrder />} />
+            </Route>
+
             <Route path="/admin/orders/:orderId" element={<ShowOrder />} />
 
             {/* Admin Routes */}
@@ -60,7 +67,6 @@ const App = () => {
               <Route path="/admin/orders/:orderId" element={<ShowOrder />} />
             </Route>
           </Routes>
-        
       </div>
       <Footer />
     </AuthProvider>
