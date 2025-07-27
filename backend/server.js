@@ -1,6 +1,5 @@
 import express from "express"
 import cors from "cors" // cross-origin resource sharing
-import { connect } from "mongoose"
 import { connectDB } from "./config/db.js"
 import foodRouter from "./routes/foodRoute.js"
 import userRouter from "./routes/userRoute.js"
@@ -38,6 +37,7 @@ app.get("/", (req,res)=> {
 
 app.listen(port,()=>{
    console.log(`Server Started on http://localhost:${port}`) 
+   console.log(`Frontend address: http://localhost:5173/`) 
 
 })
 

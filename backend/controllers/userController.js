@@ -20,8 +20,13 @@ const loginUser = async (req,res) => {
         }
 
         const token = createToken(user._id, user.role);
-        res.json({success:true,token})
-
+        res.json({
+            success: true, 
+            token, 
+            role: user.role,
+            name: user.name,
+            email: user.email
+        });
 
     } catch (error) {
         console.log(error);
@@ -39,7 +44,8 @@ const createToken = (id, role) => {
 
 // register user 
 const registerUser = async (req,res) => { 
-    const {name, password, email, role} = req.body;
+    const role = "user";
+    const {name, password, email} = req.body;
     try{
         // checking is user already exists
         const exists = await userModel.findOne({email});

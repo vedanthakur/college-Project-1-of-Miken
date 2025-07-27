@@ -2,20 +2,12 @@ import React, { useContext } from 'react'
 import './Cart.css'
 import { StoreContext } from '../../context/StoreContext'
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 const Cart = () => {
   const { addToCart, cartItems, food_list, removeFromCart, removeFoodFromCart, getTotalCartAmount, url } = useContext(StoreContext);
 
   const navigate = useNavigate();
 
-
-
-  const onChangeHandler = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setData(data => ({ ...data, [name]: value }))
-  }
   return (
     <div className='cart'>
       <div className="cart-items">
@@ -29,7 +21,7 @@ const Cart = () => {
         </div>
         <br />
         <hr />
-        {food_list.map((item, index) =>
+        {food_list.map((item) =>
           (cartItems[item._id] > 0) &&
           (
             <div key={item._id}>
