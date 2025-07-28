@@ -62,6 +62,27 @@ const removeFromTheCart = async (req,res) => {
     }
 }
 
+const clearCart = async (req,res) => {
+    try {
+        let userId = req.userId
+
+        // Construct the field path for $unset.
+        const unsetFieldPath = "cartData";
+
+        await userModel.findByIdAndUpdate(
+            userId,
+            { $unset: { [unsetFieldPath]: "" } }, // Use dynamic key for $unset
+            { new: true } // Option to return the updated document
+        );
+
+        res.json({success:true,message:"Cart Cleared!!"})
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:"Error"})
+
+    }
+}
+
 // fetch user cart data
 const getCart = async (req,res) => {
     try {
@@ -75,4 +96,4 @@ const getCart = async (req,res) => {
     } 
 }
 
-export {addToCart, removeFromCart, removeFromTheCart, getCart}
+export {addToCart, removeFromCart, removeFromTheCart, getCart, clearCart}

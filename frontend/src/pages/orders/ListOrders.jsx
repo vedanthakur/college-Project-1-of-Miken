@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import './Orders.css';
+import './ListOrders.css';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { StoreContext } from '../../../context/StoreContext';
+import { StoreContext } from '../../context/StoreContext';
 import { useNavigate } from 'react-router-dom';
 
-const Orders = () => {
+const ListOrders = () => {
   const [order, setOrder] = useState([]);
   const navigate = useNavigate();
 
@@ -45,19 +45,20 @@ const Orders = () => {
           <b>Total amount</b>
         </div>
         {order.length > 0 ? (
-          order.map((item, index) => (
+          order.map((item) => (
             <div key={item._id} className='order-table-format'>
               <p>Name: {item.name}</p>
               <p>Address: {item.address}</p>
               <p>Phone: {item.phone}</p>
               <p>Total: {item.total_amount}$</p>
+              <p>Order Status: {item?.order_status}</p>
               {item.orderFoods.map(food =>
                 <div key={food.food_id}>
                   <p>Food ID: {food.food_id}</p>
                   <p>Quantity: {food.quantity}</p>
                 </div>
               )}
-              <button onClick={() => navigate('/order/show', { state: { orderId: item._id } })}>Show Order</button>
+              <button onClick={() => navigate(`/admin/orders/${item._id }`)}>Show Order</button>
               <hr />
             </div>
           ))
@@ -69,4 +70,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default ListOrders;

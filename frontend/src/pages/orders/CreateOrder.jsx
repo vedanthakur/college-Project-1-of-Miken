@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import './PlaceOrder.css'
+import './CreateOrder.css'
 import { StoreContext } from '../../context/StoreContext'
 import { useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
@@ -9,8 +9,8 @@ const url ="http://localhost:4000"
 
 
 
-const PlaceOrder = () => {
-  const { getTotalCartAmount, cartItems, token } = useContext(StoreContext)
+const CreateOrder = () => {
+  const { getTotalCartAmount, cartItems, token, clearCart } = useContext(StoreContext)
 
   const [data, setData] = useState(
     {
@@ -64,6 +64,7 @@ const PlaceOrder = () => {
 
     if (response.data.success) {
       toast.success(response.data.success)
+      clearCart()
     }
     else {
       toast.error(response.data.message)
@@ -112,4 +113,4 @@ const PlaceOrder = () => {
   )
 }
 
-export default PlaceOrder
+export default CreateOrder

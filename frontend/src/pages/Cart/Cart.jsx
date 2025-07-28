@@ -2,20 +2,12 @@ import React, { useContext } from 'react'
 import './Cart.css'
 import { StoreContext } from '../../context/StoreContext'
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 const Cart = () => {
-  const { addToCart, cartItems, food_list, removeFromCart, removeFoodFromCart, getTotalCartAmount, url } = useContext(StoreContext);
+  const { addToCart, cartItems, foodList, removeFromCart, removeFoodFromCart, getTotalCartAmount, url } = useContext(StoreContext);
 
   const navigate = useNavigate();
 
-
-
-  const onChangeHandler = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setData(data => ({ ...data, [name]: value }))
-  }
   return (
     <div className='cart'>
       <div className="cart-items">
@@ -29,7 +21,7 @@ const Cart = () => {
         </div>
         <br />
         <hr />
-        {food_list.map((item, index) =>
+        {foodList.map((item) =>
           (cartItems[item._id] > 0) &&
           (
             <div key={item._id}>
@@ -71,7 +63,7 @@ const Cart = () => {
               <b>${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}</b>
             </div>
           </div>
-          <button onClick={() => navigate('/order')}>PROCEED TO CHECKOUT</button>
+          <button onClick={() => navigate('/orders/create')}>PROCEED TO CHECKOUT</button>
         </div>
       </div>
     </div>
