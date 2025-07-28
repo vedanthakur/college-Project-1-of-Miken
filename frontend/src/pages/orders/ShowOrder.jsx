@@ -59,6 +59,7 @@ const ShowOrder = () => {
               <p>Address: {order.address}</p>
               <p>Phone: {order.phone}</p>
               <p>Total: {order.total_amount}$</p>
+              <p>Order Status: {order.order_status}</p>
               
               
               {foodList.map((item) => {

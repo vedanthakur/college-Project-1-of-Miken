@@ -51,6 +51,7 @@ const ListOrders = () => {
               <p>Address: {item.address}</p>
               <p>Phone: {item.phone}</p>
               <p>Total: {item.total_amount}$</p>
+              <p>Order Status: {item?.order_status}</p>
               {item.orderFoods.map(food =>
                 <div key={food.food_id}>
                   <p>Food ID: {food.food_id}</p>
