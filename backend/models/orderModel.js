@@ -18,15 +18,29 @@ const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: 'userModel'
+    ref: "userModel",
   },
-  orderFoods:{type:Array, default:[]}
+  order_status: {
+    type: String,
+    required: false,
+    enum: [
+      "Pending",
+      "Processing",
+      "Confirmed",
+      "Ready For Pickup",
+      "Out For Delivery",
+      "Delivered",
+      "Rejected"
+    ],
+    default: "Pending"
+  },
+  orderFoods: { type: Array, default: [] },
 });
 
-const orderModel = mongoose.models.order || mongoose.model("order", orderSchema);
+const orderModel =
+  mongoose.models.order || mongoose.model("order", orderSchema);
 
 export default orderModel;
-
 
 ///// order /////
 // totalPrice
