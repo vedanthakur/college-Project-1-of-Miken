@@ -7,7 +7,7 @@ const StoreContextProvider = (props) => {
 
     const [cartItems, setCartItems] = useState({});
     const [token, setToken] = useState("");
-    const [food_list, setFoodList] = useState([])
+    const [foodList, setFoodList] = useState([])
 
     useEffect(() => {
         async function loadData() {
@@ -61,7 +61,7 @@ const StoreContextProvider = (props) => {
         let totalAmount = 0;
         for (const item in cartItems) {
             if (cartItems[item] > 0) {
-                let itemInfo = food_list.find((product) => product._id === item);
+                let itemInfo = foodList.find((product) => product._id === item);
                 totalAmount += itemInfo.price * cartItems[item];
             }
         }
@@ -77,12 +77,17 @@ const StoreContextProvider = (props) => {
         const response = await axios.post(url + "/api/cart/get", {}, { headers: { Authorization: `Bearer ${token}` } })
         setCartItems(response.data.cartData);
     }
+    
+    const loadOrderData = async (token) => {
+        const response = await axios.get(url + "/api/order/get", {}, { headers: { Authorization: `Bearer ${token}` } })
+        setCartItems(response.data.cartData);
+    }
 
 
 
 
     const contextValue = {
-        food_list,
+        foodList,
         cartItems,
         setCartItems,
         addToCart,
@@ -92,7 +97,8 @@ const StoreContextProvider = (props) => {
         url,
         token,
         setToken,
-        clearCart
+        clearCart,
+        loadOrderData
     }
 
 

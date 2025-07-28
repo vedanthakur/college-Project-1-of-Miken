@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
-import "./ShowOrder.css";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { StoreContext } from "../../context/StoreContext";
-import { useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from 'react';
+import './ListOrders.css';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { StoreContext } from '../../context/StoreContext';
+import { useParams } from 'react-router-dom';
 
 const ShowOrder = () => {
   const [order, setOrder] = useState({});
-  const { orderId } = useParams();
+  const {orderId} = useParams()
 
-  const { url, token } = useContext(StoreContext);
+  const { url, token, foodList } = useContext(StoreContext);
 
   // Fetch the order when the component mounts
   useEffect(() => {
@@ -20,35 +20,65 @@ const ShowOrder = () => {
   const fetchOrder = async (token) => {
     try {
       const response = await axios.get(`${url}/api/order/${orderId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` } 
       });
-
+      
       if (response.data.success) {
-        const orderData = response.data.order
-        setOrder(orderData);
+        setOrder(response.data.order);
       }
     } catch (error) {
-      toast.error("Failed to connect to server or fetch order" + error);
+      console.error('Error fetching order order:', error);
+      toast.error('Failed to connect to server or fetch order');
     }
   };
 
+
+
+  if (!order.orderFoods) {
+    return (
+      <div className='order add flex-col'>
+        <p>Loading order details...</p>
+      </div>
+    );
+  }
+
+
   return (
-    <div className="order add flex-col">
+    <div className='order add flex-col'>
       <p>All orders order</p>
       <div className="order-table">
-        {
-          <div key={order._id} className="order-table-format">
-            <p>Name: {order.name}</p>
-            <p>Address: {order.address}</p>
-            <p>Phone: {order.phone}</p>
-            <p>Total: {order.total_amount}$</p>
-            {order.orderFoods.map((food) => (
-              <div className="food-item" key={food.food_id}>
-                <p>Quantity: {food.quantity}</p>
-              </div>
-            ))}
-            <hr />
-          </div>
+        <div className="order-table-format title">
+          <b>Name</b>
+          <b>Address</b>
+          <b>Phone</b>
+          <b>Total amount</b>
+        </div>
+        {    
+          <div key={order._id} className='order-table-format'>
+              <p>Name: {order.name}</p>
+              <p>Address: {order.address}</p>
+              <p>Phone: {order.phone}</p>
+              <p>Total: {order.total_amount}$</p>
+              <p>Order Status: {order.order_status}</p>
+              
+              
+              {foodList.map((item) => {
+                const orderedFood = order.orderFoods.find(food => food.food_id === item._id);
+                return orderedFood && (
+                  <div key={item._id}>
+                    <div className='cart-items-title cart-items-item'>
+                      <img src={url + "/images/" + item.image} alt="" />
+                      <p>{item.name}</p>
+                      <p>${item.price}</p>
+                      <p>{orderedFood.quantity}</p>
+                      <p>${orderedFood.quantity * item.price}</p>
+                    </div>
+                    <hr />
+                  </div>
+                );
+              })}
+              <hr />
+            </div>
         }
       </div>
     </div>
