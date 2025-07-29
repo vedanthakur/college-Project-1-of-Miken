@@ -3,7 +3,7 @@ import orderModel from "../models/orderModel.js";
 // Create a new order
 const createOrder = async (req, res) => {
     try {
-        const { name, total_amount, phone, address, orderFoods } = req.body;
+        const { name, total_amount, phone, address, location, orderFoods } = req.body;
        
         const newOrder = new orderModel({
             name,
@@ -11,19 +11,30 @@ const createOrder = async (req, res) => {
             phone,
             address,
             userId: req.userId,
+            location,
             orderFoods
         });
 
         await newOrder.save();
         
-
         res.status(201).json({ success: "created order", order: newOrder });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
 };
 
-// Get all orders
+// Get all orders for user
+const getOrdersOfUser = async (req, res) => {
+    const userId = req.userId;
+    try {
+        const orders = await orderModel.find({userId});
+        res.status(200).json({orders, success: true});
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Get all orders for admin
 const getOrders = async (req, res) => {
     try {
         const orders = await orderModel.find();
@@ -37,8 +48,11 @@ const getOrders = async (req, res) => {
 const getOrderById = async (req, res) => {
     try {
         const order = await orderModel.findById(req.params.id);
+        if (req.userId === order.userId.toString() || req.user.role === "admin") {
+            res.status(200).json({order, success: true});
+        }
         if (!order) return res.status(404).json({ error: 'Order not found' });
-        res.status(200).json({order, success: true});
+        res.status(403).json({ error: "Not authorized" });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -81,4 +95,4 @@ const deleteOrder = async (req, res) => {
     }
 };
 
-export { createOrder, getOrders, getOrderById, updateOrder, deleteOrder };
+export { createOrder, getOrders, getOrdersOfUser, getOrderById, updateOrder, deleteOrder };

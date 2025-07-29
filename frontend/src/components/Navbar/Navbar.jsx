@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './Navbar.css'
 import { assets } from '../../assets/assets'
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,6 +10,15 @@ const Navbar = ({setShowLogin}) => {
   const {getTotalCartAmount, token, setToken} = useContext(StoreContext);
 
   const navigate = useNavigate();
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    if (localStorage.getItem("currentUser")) {
+      const loggedInUserData = localStorage.getItem("currentUser");
+      const userRole = JSON.parse(loggedInUserData).role;
+      setRole(userRole);
+    }
+  }, []);
 
   const logout = () =>{
       localStorage.removeItem("currentUser")
@@ -24,7 +33,7 @@ const Navbar = ({setShowLogin}) => {
         <ul className="navbar-menu">
           <Link to ='/' onClick={()=>setMenu("home")} className={menu==="home"?"active":""}>home</Link>
           <a href='#explore-menu' onClick={()=>setMenu("menu")} className={menu==="menu"?"active":""}>menu</a>
-          <Link to='/admin/order/list' onClick={()=>setMenu("Order List")} className={menu==="mobile-app"?"active":""}>Order List</Link>
+          <Link to={role === 'admin' ? '/admin/orders' : (role === 'user' ? '/orders' : '/')} onClick={()=>setMenu("Order List")} className={menu==="mobile-app"?"active":""}>Order List</Link>
           <a href='#footer' onClick={()=>setMenu("contact-us")} className={menu==="contact-us"?"active":""}>contact us</a>
         </ul>
 

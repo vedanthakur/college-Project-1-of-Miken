@@ -34,6 +34,13 @@ const orderSchema = new mongoose.Schema({
     ],
     default: "Pending"
   },
+  location: {
+    type: {
+      latitude: { type: Number, required: true },
+      longitude: { type: Number, required: true },
+    },
+    required: false,
+  },
   orderFoods: { type: Array, default: [] },
 });
 
@@ -41,20 +48,3 @@ const orderModel =
   mongoose.models.order || mongoose.model("order", orderSchema);
 
 export default orderModel;
-
-///// order /////
-// totalPrice
-// delivery_fee
-// phone
-// address
-// name
-// payment enum['cod', 'online_paid']
-// paid_amount
-
-// order 1 => many food
-
-//// order_food //////
-// food_id
-// price
-// quantity
-// order_id

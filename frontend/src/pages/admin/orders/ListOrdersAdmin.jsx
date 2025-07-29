@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import "./ListOrders.css";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { StoreContext } from "../../context/StoreContext";
+import { StoreContext } from "../../../context/StoreContext"; 
 import { useNavigate } from "react-router-dom";
 
-const ListOrders = () => {
+const ListOrdersAdmin = () => {
   const [order, setOrder] = useState([]);
   const navigate = useNavigate();
 
@@ -14,7 +14,7 @@ const ListOrders = () => {
   useEffect(() => {
     const fetchOrder = async (token) => {
       try {
-        const response = await axios.get(`${url}/api/order/list`, {
+        const response = await axios.get(`${url}/api/order/listAdmin`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -53,7 +53,7 @@ const ListOrders = () => {
                   <p>Quantity: {food.quantity}</p>
                 </div>
               ))}
-              <button onClick={() => navigate(`/orders/${item._id}`)}>
+              <button onClick={() => navigate(`/admin/orders/${item._id}`)}>
                 Show Order
               </button>
               <hr />
@@ -67,4 +67,4 @@ const ListOrders = () => {
   );
 };
 
-export default ListOrders;
+export default ListOrdersAdmin;

@@ -2,16 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import "./ListOrders.css";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { StoreContext } from "../../context/StoreContext";
+import { StoreContext } from "../../../context/StoreContext";
 import { useParams } from "react-router-dom";
 
-const ShowOrder = () => {
+const ShowOrderAdmin = () => {
   const [order, setOrder] = useState({});
-  const { orderId } = useParams();
+  const {orderId} = useParams();
 
   const { url, token, foodList } = useContext(StoreContext);
 
-  // Fetch the order when the component mounts
   useEffect(() => {
     const fetchOrder = async (token) => {
       try {
@@ -82,4 +81,4 @@ const ShowOrder = () => {
   );
 };
 
-export default ShowOrder;
+export default ShowOrderAdmin;
