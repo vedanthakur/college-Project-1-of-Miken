@@ -15,6 +15,7 @@ const StoreContextProvider = (props) => {
             if (localStorage.getItem("currentUser")) {
                 const mytoken = JSON.parse(localStorage.getItem("currentUser")).token
                 setToken(mytoken); 
+                localStorage.setItem("token", mytoken)
                 await loadCartData(mytoken);
             }
         }

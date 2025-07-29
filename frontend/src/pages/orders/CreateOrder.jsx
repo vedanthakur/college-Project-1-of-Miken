@@ -102,76 +102,83 @@ const CreateOrder = () => {
   };
 
   return (
-    <form className="place-order" onSubmit={onSubmitHandler}>
-      <div className="place-order-left">
-        <p className="title">Delivery Information</p>
-        <div className="multi-fields">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full name"
-            onChange={onChangeHandler}
-            value={data.name}
-          />
-        </div>
-
-        <input
-          type="phone"
-          name="phone"
-          placeholder="Phone no."
-          onChange={onChangeHandler}
-          value={data.phone}
-        />
-        <input
-          type="text"
-          name="address"
-          placeholder="address"
-          onChange={onChangeHandler}
-          value={data.address}
-        />
-        <div className="location-section">
-          <button
-            type="button"
-            onClick={getCurrentLocation}
-            disabled={isLoading}
-          >
-            {isLoading ? "Getting Location..." : "Get Current Location"}
-          </button>
-          {location && <p className="location-status">Location acquired ✓</p>}
-        </div>
-      </div>
-      <div className="place-order-right">
-        <div className="cart-total">
-          <h2>Cart Totals</h2>
-          <div>
-            <div className="cart-total-details">
-              <p>Subtotals</p>
-              <p>${getTotalCartAmount()}</p>
-            </div>
-            <hr />
-            <div className="cart-total-details">
-              <p>Delivery Fee</p>
-              <p>${getTotalCartAmount() === 0 ? 0 : 2}</p>
-            </div>
-            <hr />
-            <div className="cart-total-details">
-              <b>Total</b>
-              <b>
-                ${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}
-              </b>
-            </div>
+    <>
+      <form className="place-order" onSubmit={onSubmitHandler}>
+        <div className="place-order-left">
+          <p className="title">Delivery Information</p>
+          <div className="multi-fields">
+            <input
+              type="text"
+              name="name"
+              placeholder="Full name"
+              onChange={onChangeHandler}
+              value={data.name}
+            />
           </div>
 
-          {location && !isSubmitted && <button type="submit">Order</button>}
-          {isSubmitted && (
-            <>
-              <p className="order-success">Order placed successfully!</p>
-              <button className="location-status" onClick={() => navigate('/orders')}>View your Orders</button>
-            </>
-          )}
+          <input
+            type="phone"
+            name="phone"
+            placeholder="Phone no."
+            onChange={onChangeHandler}
+            value={data.phone}
+          />
+          <input
+            type="text"
+            name="address"
+            placeholder="address"
+            onChange={onChangeHandler}
+            value={data.address}
+          />
+          <div className="location-section">
+            <button
+              type="button"
+              onClick={getCurrentLocation}
+              disabled={isLoading}
+            >
+              {isLoading ? "Getting Location..." : "Get Current Location"}
+            </button>
+            {location && <p className="location-status">Location acquired ✓</p>}
+          </div>
         </div>
-      </div>
-    </form>
+        <div className="place-order-right">
+          <div className="cart-total">
+            <h2>Cart Totals</h2>
+            <div>
+              <div className="cart-total-details">
+                <p>Subtotals</p>
+                <p>${getTotalCartAmount()}</p>
+              </div>
+              <hr />
+              <div className="cart-total-details">
+                <p>Delivery Fee</p>
+                <p>${getTotalCartAmount() === 0 ? 0 : 2}</p>
+              </div>
+              <hr />
+              <div className="cart-total-details">
+                <b>Total</b>
+                <b>
+                  ${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}
+                </b>
+              </div>
+            </div>
+
+            {location && !isSubmitted && <button type="submit">Order</button>}
+          </div>
+        </div>
+      </form>
+      {isSubmitted && (
+        <>
+          <p className="order-success">Order placed successfully!</p>
+          <button
+            className="location-status"
+            onClick={() => navigate("/orders")}
+          >
+            View your Orders
+          </button>
+        </>
+      )}
+    </>
   );
 };
 

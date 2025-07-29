@@ -13,9 +13,9 @@ import authRoles from "../middleware/roleMiddleware.js";
 const router = express.Router();
 
 router.post("/", authMiddleware, createOrder);           // Create a new order
-router.get("/listAdmin", authMiddleware, authRoles("admin"), getOrders);              // Get all orders
+router.get("/listAdmin", authMiddleware, authRoles("admin", "deliverer"), getOrders);              // Get all orders
 router.get("/list/", authMiddleware, authRoles("user"), getOrdersOfUser);              // Get all orders
-router.get("/:id", authMiddleware, authRoles("admin", "user"), getOrderById);        // Get order by ID
+router.get("/:id", authMiddleware, authRoles("admin", "user", "deliverer"), getOrderById);        // Get order by ID
 router.put("/:id", authMiddleware, updateOrder);         // Update order by ID
 router.delete("/:id", authMiddleware, deleteOrder);      // Delete order by ID
 

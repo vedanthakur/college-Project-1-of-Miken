@@ -1,72 +1,93 @@
-import React, { useContext, useEffect, useState } from 'react'
-import './Navbar.css'
-import { assets } from '../../assets/assets'
-import { Link, useNavigate } from 'react-router-dom';
-import { StoreContext } from '../../context/StoreContext';
+import React, { useContext, useState } from "react";
+import "./Navbar.css";
+import { assets } from "../../assets/assets";
+import { Link } from "react-router-dom";
+import { StoreContext } from "../../context/StoreContext";
+import { useAuth } from "../../context/AuthContext";
 
-const Navbar = ({setShowLogin}) => {
-
-  const [menu,setMenu] = useState("menu");
-  const {getTotalCartAmount, token, setToken} = useContext(StoreContext);
-
-  const navigate = useNavigate();
-  const [role, setRole] = useState("");
-
-  useEffect(() => {
-    if (localStorage.getItem("currentUser")) {
-      const loggedInUserData = localStorage.getItem("currentUser");
-      const userRole = JSON.parse(loggedInUserData).role;
-      setRole(userRole);
-    }
-  }, []);
-
-  const logout = () =>{
-      localStorage.removeItem("currentUser")
-
-      setToken("");
-      navigate("/")
-  }
+const Navbar = ({ setShowLogin }) => {
+  const [menu, setMenu] = useState("menu");
+  const { getTotalCartAmount } = useContext(StoreContext);
+  const { logout, isAuthenticated, userRole } = useAuth();
 
   return (
-    <div className='navbar'>
-        <Link to='/' ><img src={assets.logo} alt="" className="logo" /></Link>
-        <ul className="navbar-menu">
-          <Link to ='/' onClick={()=>setMenu("home")} className={menu==="home"?"active":""}>home</Link>
-          <a href='#explore-menu' onClick={()=>setMenu("menu")} className={menu==="menu"?"active":""}>menu</a>
-          <Link to={role === 'admin' ? '/admin/orders' : (role === 'user' ? '/orders' : '/')} onClick={()=>setMenu("Order List")} className={menu==="mobile-app"?"active":""}>Order List</Link>
-          <a href='#footer' onClick={()=>setMenu("contact-us")} className={menu==="contact-us"?"active":""}>contact us</a>
-        </ul>
+    <div className="navbar">
+      <Link to="/">
+        <img src={assets.logo} alt="" className="logo" />
+      </Link>
+      <ul className="navbar-menu">
+        <Link
+          to="/"
+          onClick={() => setMenu("home")}
+          className={menu === "home" ? "active" : ""}
+        >
+          home
+        </Link>
+        <a
+          href="#explore-menu"
+          onClick={() => setMenu("menu")}
+          className={menu === "menu" ? "active" : ""}
+        >
+          menu
+        </a>
+        {isAuthenticated && (
+          <Link
+            to={userRole === "admin" ? "/admin/orders" : userRole === "deliverer" ? "/deliverer/orders" : "/orders"}
+            onClick={() => setMenu("Order List")}
+            className={menu === "mobile-app" ? "active" : ""}
+          >
+            Order List
+          </Link>
+        )}
+        <a
+          href="#footer"
+          onClick={() => setMenu("contact-us")}
+          className={menu === "contact-us" ? "active" : ""}
+        >
+          contact us
+        </a>
+      </ul>
 
- <div className="navbar-right">
-  <img src={assets.search_icon} alt="" />
-  <div className="navbar-search-icon">
-   <Link to='/cart'><img src={assets.basket_icon} alt="" /></Link>
-    <div className={getTotalCartAmount()===0?"":"dot"}></div>
-
-       </div> 
-          {!token? <button onClick={()=>setShowLogin(true)}>
-          sign in
-          {/* Add the star elements inside the button */}
-          <div className="star-1">⭐</div> {/* You can use actual SVG/image here */}
-          <div className="star-2">✨</div> {/* Or even empty divs if your CSS uses ::before/:after */}
-          <div className="star-3">🌟</div>
-          <div className="star-4">💫</div>
-          <div className="star-5">🌠</div>
-          <div className="star-6">✨</div>
-        </button>:<div className='navbar-profile'>
-
-          <img src={assets.profile_icon} alt="" />
-          <ul className="navbar-profile-dropdown">
-            <li><img src={assets.bag_icon} alt="" /><p>Orders</p></li>
+      <div className="navbar-right">
+        {userRole === "user" && (
+          <div className="navbar-search-icon">
+            <Link to="/cart">
+              <img src={assets.basket_icon} alt="" />
+            </Link>
+            <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
+          </div>
+        )}
+        {!isAuthenticated ? (
+          <button onClick={() => setShowLogin(true)}>
+            sign in
+            <div className="star-1">⭐</div>
+            <div className="star-2">✨</div>
+            <div className="star-3">🌟</div>
+            <div className="star-4">💫</div>
+            <div className="star-5">🌠</div>
+            <div className="star-6">✨</div>
+          </button>
+        ) : (
+          <div className="navbar-profile">
+            <img src={assets.profile_icon} alt="" />
+            <ul className="navbar-profile-dropdown">
+              <li>
+                <Link to={userRole === "admin" ? "/admin/orders" : "/orders"}>
+                  <img src={assets.bag_icon} alt="" />
+                  <p>Orders</p>
+                </Link>
+              </li>
               <hr />
-              <li onClick={logout}><img src={assets.logout_icon} alt="" /><p>Logout</p></li>
-          </ul>
-          </div>}
+              <li onClick={logout}>
+                <img src={assets.logout_icon} alt="logout" />
+                <p>Logout</p>
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-
-       
-       </div>
-       </div>
-  )
-}
-export default Navbar
+export default Navbar;

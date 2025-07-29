@@ -4,6 +4,15 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { StoreContext } from "../../../context/StoreContext";
 import { useParams } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { Icon } from 'leaflet';
+
+const markerIcon = new Icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
 
 const ShowOrderAdmin = () => {
   const [order, setOrder] = useState({});
@@ -77,6 +86,30 @@ const ShowOrderAdmin = () => {
           </div>
         }
       </div>
+
+      {order.location && (
+        <div className="map-container">
+          <h3>Delivery Location</h3>
+          <MapContainer 
+            center={[order.location.latitude, order.location.longitude]} 
+            zoom={13} 
+            style={{ height: "400px", width: "100%" }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <Marker 
+              position={[order.location.latitude, order.location.longitude]}
+              icon={markerIcon}
+            >
+              <Popup>
+                Delivery Address: {order.address}
+              </Popup>
+            </Marker>
+          </MapContainer>
+        </div>
+      )}
     </div>
   );
 };

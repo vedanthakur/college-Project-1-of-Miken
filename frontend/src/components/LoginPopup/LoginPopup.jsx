@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext' // <-- Import useAuth
 
 const LoginPopup = ({ setShowLogin }) => {
     const { url, setToken } = useContext(StoreContext)
-    const { login } = useAuth() // <-- Use AuthContext
+    const { login } = useAuth()
 
     const [currState, setCurrState] = useState("Login")
     const [data, setData] = useState({
@@ -35,7 +35,7 @@ const LoginPopup = ({ setShowLogin }) => {
             const response = await axios.post(newUrl, data)
             
             if (response.data.success) {
-                setToken(response.data.token);  // This should now work
+                setToken(response.data.token); 
                 login({
                     token: response.data.token,
                     role: response.data.role,
@@ -47,8 +47,7 @@ const LoginPopup = ({ setShowLogin }) => {
                 alert(response.data.message);
             }
         } catch (error) {
-            console.error("Login error:", error);
-            alert("An error occurred during login. Please try again.");
+            alert("An error occurred during login. Please try again." + error);
         }
     }
 
