@@ -7,12 +7,23 @@ import { useParams } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Icon } from 'leaflet';
+import Select from 'react-select';
 
 const markerIcon = new Icon({
   iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41]
 });
+
+const orderStatusOptions = [
+  { value: 'Pending', label: 'Pending' },
+  { value: 'Processing', label: 'Processing' },
+  { value: 'Confirmed', label: 'Confirmed' },
+  { value: 'Ready For Pickup', label: 'Ready For Pickup' },
+  { value: 'Out For Delivery', label: 'Out For Delivery' },
+  { value: 'Delivered', label: 'Delivered' },
+  { value: 'Rejected', label: 'Rejected' }
+];
 
 const ShowOrderAdmin = () => {
   const [order, setOrder] = useState({});
@@ -36,6 +47,23 @@ const ShowOrderAdmin = () => {
     };
     fetchOrder(token);
   }, [token, url, orderId]);
+
+  const handleStatusChange = async (selectedOption) => {
+    try {
+      const response = await axios.patch(
+        `${url}/api/order/${orderId}/status`,
+        { order_status: selectedOption.value },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.data.success) {
+        setOrder({ ...order, order_status: selectedOption.value });
+        toast.success('Order status updated successfully');
+      }
+    } catch (error) {
+      toast.error('Failed to update order status: ' + error.message);
+    }
+  };
 
   if (!order.orderFoods) {
     return (
@@ -61,7 +89,15 @@ const ShowOrderAdmin = () => {
             <p>Address: {order.address}</p>
             <p>Phone: {order.phone}</p>
             <p>Total: {order.total_amount}$</p>
-            <p>Order Status: {order.order_status}</p>
+            <div className="status-update-container">
+              <p>Order Status:</p>
+              <Select
+                options={orderStatusOptions}
+                value={orderStatusOptions.find(option => option.value === order.order_status)}
+                onChange={handleStatusChange}
+                className="status-select"
+              />
+            </div>
 
             {foodList.map((item) => {
               const orderedFood = order.orderFoods.find(

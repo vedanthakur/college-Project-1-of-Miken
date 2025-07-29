@@ -24,7 +24,7 @@ const AdminSidebar = () => {
           </NavLink>
         )}
 
-        <NavLink to="/admin/orders" className="sidebar-option">
+        <NavLink to={userRole === "admin" ? "/admin/orders" : userRole === "deliverer" ? "/deliverer/orders" : "/"} className="sidebar-option">
           <img src={assets.add_icon} alt="orders" />
           <p>Orders</p>
         </NavLink>

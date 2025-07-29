@@ -95,4 +95,44 @@ const deleteOrder = async (req, res) => {
     }
 };
 
-export { createOrder, getOrders, getOrdersOfUser, getOrderById, updateOrder, deleteOrder };
+
+const updateOrderStatus = async (req, res) => {
+    try {
+        const { order_status } = req.body;
+        const orderId = req.params.id;
+        
+        if (!order_status) {
+            return res.status(400).json({
+                success: false,
+                message: "Order status is required"
+            });
+        }
+        
+        const order = await orderModel.findByIdAndUpdate(
+            orderId,
+            { order_status },
+            { new: true }
+        );
+        
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+        
+        res.status(200).json({
+            success: true,
+            message: "Order status updated successfully",
+            data: order
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error updating order status",
+            error: error.message
+        });
+    }
+};
+
+export { createOrder, getOrders, getOrdersOfUser, getOrderById, updateOrder, deleteOrder, updateOrderStatus };

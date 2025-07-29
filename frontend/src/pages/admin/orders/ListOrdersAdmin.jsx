@@ -4,10 +4,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { StoreContext } from "../../../context/StoreContext"; 
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 const ListOrdersAdmin = () => {
   const [order, setOrder] = useState([]);
   const navigate = useNavigate();
+  const {userRole} = useAuth();
 
   const { url, token } = useContext(StoreContext);
 
@@ -53,7 +55,7 @@ const ListOrdersAdmin = () => {
                   <p>Quantity: {food.quantity}</p>
                 </div>
               ))}
-              <button onClick={() => navigate(`/admin/orders/${item._id}`)}>
+              <button onClick={() => navigate(`/${userRole}/orders/${item._id}`)}>
                 Show Order
               </button>
               <hr />

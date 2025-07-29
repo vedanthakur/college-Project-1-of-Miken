@@ -5,7 +5,8 @@ import {
     getOrdersOfUser,
     getOrderById,
     updateOrder,
-    deleteOrder
+    deleteOrder,
+    updateOrderStatus 
 } from "../controllers/orderController.js";
 import authMiddleware from "../middleware/auth.js";
 import authRoles from "../middleware/roleMiddleware.js";
@@ -18,5 +19,6 @@ router.get("/list/", authMiddleware, authRoles("user"), getOrdersOfUser);       
 router.get("/:id", authMiddleware, authRoles("admin", "user", "deliverer"), getOrderById);        // Get order by ID
 router.put("/:id", authMiddleware, updateOrder);         // Update order by ID
 router.delete("/:id", authMiddleware, deleteOrder);      // Delete order by ID
+router.patch("/:id/status", authMiddleware, authRoles("admin", "deliverer"), updateOrderStatus);
 
 export default router;
