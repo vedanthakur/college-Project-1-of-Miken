@@ -42,3 +42,26 @@
 .leaflet-container {
   border-radius: 8px;
 }
+
+.deliverer-assign-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.deliverer-select {
+  width: 250px;
+}
+
+.deliverer-select .css-1s2u09g-control {
+  border-color: #ddd;
+}
+
+.deliverer-select .css-1pahdxg-control {
+  box-shadow: 0 0 0 1px #4CAF50;
+  border-color: #4CAF50;
+}

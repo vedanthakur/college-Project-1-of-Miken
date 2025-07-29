@@ -6,7 +6,8 @@ import {
     getOrderById,
     updateOrder,
     deleteOrder,
-    updateOrderStatus 
+    updateOrderStatus,
+    assignDeliverer
 } from "../controllers/orderController.js";
 import authMiddleware from "../middleware/auth.js";
 import authRoles from "../middleware/roleMiddleware.js";
@@ -20,5 +21,6 @@ router.get("/:id", authMiddleware, authRoles("admin", "user", "deliverer"), getO
 router.put("/:id", authMiddleware, updateOrder);         // Update order by ID
 router.delete("/:id", authMiddleware, deleteOrder);      // Delete order by ID
 router.patch("/:id/status", authMiddleware, authRoles("admin", "deliverer"), updateOrderStatus);
+router.patch("/:id/assign-deliverer", authMiddleware, authRoles("admin"), assignDeliverer); // Add this new route
 
 export default router;

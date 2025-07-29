@@ -124,4 +124,29 @@ const registerUserByAdmin = async (req, res) => {
   }
 };
 
-export { loginUser, registerUser, registerUserByAdmin };
+const getDeliverers = async (req, res) => {
+  try {
+    const deliverers = await userModel
+      .find({ role: "deliverer" })
+      .select("name email _id")
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      deliverers,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching deliverers",
+      error: error.message,
+    });
+  }
+};
+
+export {
+  loginUser,
+  registerUser,
+  registerUserByAdmin,
+  getDeliverers,
+};

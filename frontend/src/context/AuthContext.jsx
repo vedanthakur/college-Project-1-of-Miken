@@ -1,12 +1,10 @@
 // src/context/AuthContext.js
 import React, { createContext, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { StoreContext } from './StoreContext';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const navigate = useNavigate()
   const { setToken } = useContext(StoreContext)
   const [auth, setAuth] = useState(() => {
     try {
@@ -26,12 +24,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setAuth(null);
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
-
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("token");
     setToken("");
-    navigate("/");
+    setAuth({
+      isAuthenticated: false,
+      userRole: null,
+      user: null
+    });
+    window.location.href = "/"; // Force a complete reload and redirect
   };
 
   const value = {

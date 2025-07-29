@@ -20,6 +20,12 @@ const orderSchema = new mongoose.Schema({
     required: true,
     ref: "userModel",
   },
+  deliverer_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false,
+    ref: "userModel",
+    default: null
+  },
   order_status: {
     type: String,
     required: false,

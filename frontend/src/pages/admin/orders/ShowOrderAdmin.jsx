@@ -4,32 +4,37 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { StoreContext } from "../../../context/StoreContext";
 import { useParams } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import { Icon } from 'leaflet';
-import Select from 'react-select';
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import { Icon } from "leaflet";
+import Select from "react-select";
+import { useAuth } from "../../../context/AuthContext";
 
 const markerIcon = new Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
   iconSize: [25, 41],
-  iconAnchor: [12, 41]
+  iconAnchor: [12, 41],
 });
 
 const orderStatusOptions = [
-  { value: 'Pending', label: 'Pending' },
-  { value: 'Processing', label: 'Processing' },
-  { value: 'Confirmed', label: 'Confirmed' },
-  { value: 'Ready For Pickup', label: 'Ready For Pickup' },
-  { value: 'Out For Delivery', label: 'Out For Delivery' },
-  { value: 'Delivered', label: 'Delivered' },
-  { value: 'Rejected', label: 'Rejected' }
+  { value: "Pending", label: "Pending" },
+  { value: "Processing", label: "Processing" },
+  { value: "Confirmed", label: "Confirmed" },
+  { value: "Ready For Pickup", label: "Ready For Pickup" },
+  { value: "Out For Delivery", label: "Out For Delivery" },
+  { value: "Delivered", label: "Delivered" },
+  { value: "Rejected", label: "Rejected" },
 ];
 
 const ShowOrderAdmin = () => {
   const [order, setOrder] = useState({});
-  const {orderId} = useParams();
+  const [deliverers, setDeliverers] = useState([]);
+  const [selectedDeliverer, setSelectedDeliverer] = useState(null);
+  const { orderId } = useParams();
+  const { userRole } = useAuth();
 
   const { url, token, foodList } = useContext(StoreContext);
+  console.log(userRole)
 
   useEffect(() => {
     const fetchOrder = async (token) => {
@@ -48,6 +53,28 @@ const ShowOrderAdmin = () => {
     fetchOrder(token);
   }, [token, url, orderId]);
 
+  useEffect(() => {
+    const fetchDeliverers = async () => {
+      try {
+        const response = await axios.get(`${url}/api/user/deliverers`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.data.success) {
+          const delivererOptions = response.data.deliverers.map((d) => ({
+            value: d._id,
+            label: d.name,
+          }));
+          setDeliverers(delivererOptions);
+        }
+      } catch (error) {
+        toast.error("Failed to fetch deliverers: " + error.message);
+      }
+    };
+    if (userRole === "admin") {
+      fetchDeliverers();
+    }
+  }, [url, token, userRole]);
+
   const handleStatusChange = async (selectedOption) => {
     try {
       const response = await axios.patch(
@@ -58,10 +85,28 @@ const ShowOrderAdmin = () => {
 
       if (response.data.success) {
         setOrder({ ...order, order_status: selectedOption.value });
-        toast.success('Order status updated successfully');
+        toast.success("Order status updated successfully");
       }
     } catch (error) {
-      toast.error('Failed to update order status: ' + error.message);
+      toast.error("Failed to update order status: " + error.message);
+    }
+  };
+
+  const handleAssignDeliverer = async (selectedOption) => {
+    try {
+      const response = await axios.patch(
+        `${url}/api/order/${orderId}/assign-deliverer`,
+        { deliverer_id: selectedOption.value },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.data.success) {
+        setOrder({ ...order, deliverer_id: selectedOption.value });
+        setSelectedDeliverer(selectedOption);
+        toast.success("Deliverer assigned successfully");
+      }
+    } catch (error) {
+      toast.error("Failed to assign deliverer: " + error.message);
     }
   };
 
@@ -75,7 +120,7 @@ const ShowOrderAdmin = () => {
 
   return (
     <div className="order add flex-col">
-      <p>All orders order</p>
+      <p>All orders order1</p>
       <div className="order-table">
         <div className="order-table-format title">
           <b>Name</b>
@@ -93,11 +138,33 @@ const ShowOrderAdmin = () => {
               <p>Order Status:</p>
               <Select
                 options={orderStatusOptions}
-                value={orderStatusOptions.find(option => option.value === order.order_status)}
+                value={orderStatusOptions.find(
+                  (option) => option.value === order.order_status
+                )}
                 onChange={handleStatusChange}
                 className="status-select"
               />
             </div>
+
+            {userRole === "admin" && (
+              <div className="deliverer-assign-container">
+                <p>Assign Deliverer:</p>
+                <Select
+                  options={deliverers}
+                  value={
+                    selectedDeliverer ||
+                    deliverers.find((d) => d.value === order.deliverer_id)
+                  }
+                  onChange={handleAssignDeliverer}
+                  className="deliverer-select"
+                  isDisabled={
+                    order.order_status === "Delivered" ||
+                    order.order_status === "Rejected"
+                  }
+                  placeholder="Select a deliverer..."
+                />
+              </div>
+            )}
 
             {foodList.map((item) => {
               const orderedFood = order.orderFoods.find(
@@ -126,22 +193,20 @@ const ShowOrderAdmin = () => {
       {order.location && (
         <div className="map-container">
           <h3>Delivery Location</h3>
-          <MapContainer 
-            center={[order.location.latitude, order.location.longitude]} 
-            zoom={13} 
+          <MapContainer
+            center={[order.location.latitude, order.location.longitude]}
+            zoom={13}
             style={{ height: "400px", width: "100%" }}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            <Marker 
+            <Marker
               position={[order.location.latitude, order.location.longitude]}
               icon={markerIcon}
             >
-              <Popup>
-                Delivery Address: {order.address}
-              </Popup>
+              <Popup>Delivery Address: {order.address}</Popup>
             </Marker>
           </MapContainer>
         </div>

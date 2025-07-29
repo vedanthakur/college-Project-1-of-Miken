@@ -10,7 +10,7 @@ import ListFoods from "./pages/admin/foods/ListFoods";
 import Footer from "./components/footer/Footer";
 import AdminNavbar from "./components/Navbar/AdminNavbar";
 import AdminSidebar from "./components/sidebar/AdminSidebar";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/protectedRoute/ProtectedRoute";
 import LoginPopup from "./components/loginPopup/LoginPopup";
 import ListOrdersAdmin from "./pages/admin/orders/ListOrdersAdmin";
@@ -20,23 +20,30 @@ import Navbar from "./components/Navbar/Navbar";
 import { StoreContext } from "./context/StoreContext";
 import AddUser from "./pages/admin/AddUser";
 
-const App = () => {
+const AppContent = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [role, setRole] = useState("");
   const { token, url } = useContext(StoreContext);
+  const { isAuthenticated } = useAuth();
 
+  // Update role when authentication status changes
   useEffect(() => {
+    if (!isAuthenticated) {
+      setRole("");
+      return;
+    }
+
     if (localStorage.getItem("currentUser")) {
       const loggedInUserData = localStorage.getItem("currentUser");
       const userRole = JSON.parse(loggedInUserData).role;
       setRole(userRole);
     }
-  }, [token]);
+  }, [isAuthenticated, token]);
 
-  return (
-    <AuthProvider>
+return (
+  <>
       {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
-      {role === "admin" || role === "deliverer" && (
+      {(role === "admin" || role === "deliverer") && (
         <>
           <Navbar />
           <hr />
@@ -49,7 +56,7 @@ const App = () => {
           <Navbar setShowLogin={setShowLogin} />
         )}
 
-        {role === "admin" || role === "deliverer" && <AdminSidebar />}
+        {(role === "admin" || role === "deliverer") && <AdminSidebar />}
         <Routes>
           {/* Public Routes */}
           <Route
@@ -64,7 +71,7 @@ const App = () => {
             <Route path="/orders/:orderId" element={<ShowOrder />} />
           </Route>
 
-          <Route path="/admin/orders/:orderId" element={<ShowOrder />} />
+          <Route path="/orders/:orderId" element={<ShowOrder />} />
 
           {/* Admin Routes */}
           <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
@@ -89,7 +96,16 @@ const App = () => {
         </Routes>
       </div>
       <Footer />
+      </>
+  );
+};
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
     </AuthProvider>
   );
 };
+
 export default App;

@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
 import { Link } from "react-router-dom";
@@ -9,6 +10,22 @@ const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("menu");
   const { getTotalCartAmount } = useContext(StoreContext);
   const { logout, isAuthenticated, userRole } = useAuth();
+  const navigate = useNavigate();
+
+  // Reset menu state when auth status changes
+  useEffect(() => {
+    setMenu("menu");
+  }, [isAuthenticated]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/");
+      setMenu("menu");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <div className="navbar">
@@ -23,13 +40,6 @@ const Navbar = ({ setShowLogin }) => {
         >
           home
         </Link>
-        <a
-          href="#explore-menu"
-          onClick={() => setMenu("menu")}
-          className={menu === "menu" ? "active" : ""}
-        >
-          menu
-        </a>
         {isAuthenticated && (
           <Link
             to={userRole === "admin" ? "/admin/orders" : userRole === "deliverer" ? "/deliverer/orders" : "/orders"}
@@ -49,7 +59,7 @@ const Navbar = ({ setShowLogin }) => {
       </ul>
 
       <div className="navbar-right">
-        {userRole === "user" && (
+        {userRole === "user" && isAuthenticated && (
           <div className="navbar-search-icon">
             <Link to="/cart">
               <img src={assets.basket_icon} alt="" />
@@ -78,7 +88,7 @@ const Navbar = ({ setShowLogin }) => {
                 </Link>
               </li>
               <hr />
-              <li onClick={logout}>
+              <li onClick={handleLogout}>
                 <img src={assets.logout_icon} alt="logout" />
                 <p>Logout</p>
               </li>
