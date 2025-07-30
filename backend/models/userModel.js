@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: false,
-      enum: ["admin", "user", "rider"],
+      enum: ["admin", "user", "deliverer"],
       default: "user",
     },
     cartData: { type: Object, default: {} },

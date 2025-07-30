@@ -1,10 +1,11 @@
 // src/context/AuthContext.js
 import React, { createContext, useContext, useState } from 'react';
+import { StoreContext } from './StoreContext';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // Store both user info and token
+  const { setToken } = useContext(StoreContext)
   const [auth, setAuth] = useState(() => {
     try {
       const stored = localStorage.getItem('currentUser');
@@ -19,11 +20,19 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setAuth(userData);
     localStorage.setItem('currentUser', JSON.stringify(userData));
+    localStorage.setItem("token", userData.token)
   };
 
   const logout = () => {
-    setAuth(null);
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("token");
+    setToken("");
+    setAuth({
+      isAuthenticated: false,
+      userRole: null,
+      user: null
+    });
+    window.location.href = "/"; // Force a complete reload and redirect
   };
 
   const value = {
