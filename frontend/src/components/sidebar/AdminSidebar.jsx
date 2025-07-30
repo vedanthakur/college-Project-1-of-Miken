@@ -29,6 +29,13 @@ const AdminSidebar = () => {
           <p>Orders</p>
         </NavLink>
 
+         {userRole === "admin" && (
+          <NavLink to="/admin/users/create" className="sidebar-option">
+            <img src={assets.add_icon} alt="items" />
+            <p>Add User</p>
+          </NavLink>
+        )}
+
       </div>
     </div>
   );

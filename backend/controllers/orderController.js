@@ -47,7 +47,7 @@ const getOrders = async (req, res) => {
       return res.status(200).json({ orders, success: true });
     }
 
-    if (req.user.role !== "admin") {
+    if (req.user.role === "admin") {
       const orders = await orderModel.find();
       res.status(200).json({ orders, success: true });
       if (!orders) return res.status(404).json({ error: "No orders found" });
