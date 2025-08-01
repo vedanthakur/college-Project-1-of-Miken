@@ -35,13 +35,15 @@ const LoginPopup = ({ setShowLogin }) => {
             const response = await axios.post(newUrl, data)
             
             if (response.data.success) {
-                setToken(response.data.token); 
-                login({
-                    token: response.data.token,
-                    role: response.data.role,
-                    email: response.data.email || data.email,
-                    name: response.data.name || data.name
-                });
+                if (currState === "Login") {
+                    setToken(response.data.token); 
+                    login({
+                        token: response.data.token,
+                        role: response.data.role,
+                        email: response.data.email || data.email,
+                        name: response.data.name || data.name
+                    });
+                }
                 setShowLogin(false);
             } else {
                 alert(response.data.message);
